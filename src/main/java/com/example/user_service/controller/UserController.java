@@ -1,6 +1,7 @@
 package com.example.user_service.controller;
 
-import com.example.user_service.model.User;
+import com.example.user_service.model.Users;
+import com.example.user_service.service.KafkaService;
 import com.example.user_service.service.UserService;
 import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -15,37 +16,41 @@ import java.util.List;
 public class UserController {
 
     private final UserService userService;
+    private final KafkaService kafkaService;
 
     @PostMapping
-    public ResponseEntity<User> createUser(@RequestBody User user) {
-        user.setCreatedAt(LocalDateTime.now());
-        return ResponseEntity.ok(userService.CreateUser(user));
+    public ResponseEntity<Users> createUser(@RequestBody Users users) {
+        Users newUsers =userService.createUser(users);
+
+        kafkaService.sendMessageUserCreated(newUsers);
+
+        return ResponseEntity.ok(newUsers);
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<User> updateUser(@RequestBody User user, @PathVariable Long id) {
-        return ResponseEntity.ok(userService.UpdateUser(user, id));
+    public ResponseEntity<Users> updateUser(@RequestBody Users users, @PathVariable Long id) {
+        return ResponseEntity.ok(userService.updateUser(users, id));
     }
 
     @DeleteMapping("/delete/{id}")
     public ResponseEntity<Void> deleteUser(@PathVariable Long id) {
-        User user = userService.GetById(id);
-        userService.DeleteUser(user);
+        Users users = userService.getById(id);
+        userService.deleteUser(users);
         return ResponseEntity.noContent().build();
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<User> getUserById(@PathVariable Long id) {
-        return ResponseEntity.ok(userService.GetById(id));
+    public ResponseEntity<Users> getUserById(@PathVariable Long id) {
+        return ResponseEntity.ok(userService.getById(id));
     }
 
     @GetMapping
-    public ResponseEntity<List<User>> getAllUsers() {
-        return ResponseEntity.ok(userService.GetAll());
+    public ResponseEntity<List<Users>> getAllUsers() {
+        return ResponseEntity.ok(userService.getAll());
     }
 
     @GetMapping("/search")
-    public ResponseEntity<List<User>> getUsersByName(@RequestParam String name) {
-        return ResponseEntity.ok(userService.GetByName(name));
+    public ResponseEntity<List<Users>> getUsersByName(@RequestParam String name) {
+        return ResponseEntity.ok(userService.getByName(name));
     }
 }

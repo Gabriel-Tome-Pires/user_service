@@ -1,11 +1,14 @@
 package com.example.user_service.service;
 
-import com.example.user_service.model.User;
+import com.example.user_service.exception.ObjectNotFound;
+import com.example.user_service.model.Users;
 import com.example.user_service.repository.UserRepository;
 import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
+import org.springframework.data.crossstore.ChangeSetPersister;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Service
@@ -14,41 +17,43 @@ public class UserService {
     UserRepository userRepository;
 
     @Transactional
-    public User CreateUser(User user) {
-        return userRepository.save(user);
+    public Users createUser(Users users) {
+        users.setCreatedAt(LocalDateTime.now());
+        return userRepository.save(users);
     }
 
     @Transactional
-    public User UpdateUser(User user, Long id) {
-        User newUser= GetById(id);
+    public Users updateUser(Users users, Long id) {
+        Users existingUsers = getById(id);
 
-        if(newUser.getName()!=null){
-            newUser.setName(user.getName());
+        if(existingUsers.getName()!=null){
+            existingUsers.setName(users.getName());
         }
-        if(newUser.getEmail()!=null){
-            newUser.setEmail(user.getEmail());
+        if(existingUsers.getEmail()!=null){
+            existingUsers.setEmail(users.getEmail());
         }
-        if(newUser.getAddress()!=null){
-            newUser.setAddress(user.getAddress());
+        if(existingUsers.getAddress()!=null){
+            existingUsers.setAddress(users.getAddress());
         }
 
-        return userRepository.save(newUser);
+        return userRepository.save(existingUsers);
     }
 
     @Transactional
-    public void DeleteUser(User user) {
-        userRepository.delete(user);
+    public void deleteUser(Users users) {
+        userRepository.delete(users);
     }
 
-    public User GetById(Long id){
-        return userRepository.findById(id).orElseThrow();
+    public Users getById(Long id){
+        return userRepository.findById(id)
+                .orElseThrow(()-> new ObjectNotFound("User not found with id " + id));
     }
 
-    public List<User> GetAll(){
+    public List<Users> getAll(){
         return userRepository.findAll();
     }
 
-    public List<User> GetByName(String name){
+    public List<Users> getByName(String name){
         return userRepository.findByNameContaining(name);
     }
 

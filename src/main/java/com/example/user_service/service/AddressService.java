@@ -1,5 +1,6 @@
 package com.example.user_service.service;
 
+import com.example.user_service.exception.ObjectNotFound;
 import com.example.user_service.model.Address;
 import com.example.user_service.repository.AddressRepository;
 import jakarta.persistence.Entity;
@@ -13,26 +14,27 @@ import java.util.List;
 public class AddressService {
     AddressRepository addressRepository;
 
-    public Address CreateAddress(Address address){
+    public Address createAddress(Address address){
         return addressRepository.save(address);
     }
 
-    public Address UpdateAddress(Address address, Long id) {
-        Address newAddress = getById(id);
+    public Address updateAddress(Address address, Long id) {
+        Address existingAddress = getById(id);
 
-        if(newAddress.getState()!=null){newAddress.setState(address.getState());}
-        if(newAddress.getCity()!=null){newAddress.setCity(address.getCity());}
-        if(newAddress.getStreet()!=null){newAddress.setStreet(address.getStreet());}
+        if(existingAddress.getState()!=null){existingAddress.setState(address.getState());}
+        if(existingAddress.getCity()!=null){existingAddress.setCity(address.getCity());}
+        if(existingAddress.getStreet()!=null){existingAddress.setStreet(address.getStreet());}
 
-        return addressRepository.save(newAddress);
+        return addressRepository.save(existingAddress);
     }
 
-    public void DeleteAddress(Address address){
+    public void deleteAddress(Address address){
         addressRepository.delete(address);
     }
 
     public Address getById(Long id){
-        return addressRepository.findById(id).orElseThrow();
+        return addressRepository.findById(id)
+                .orElseThrow(()-> new ObjectNotFound("Address not found with id " + id));
     }
 
     public List<Address> findAll(){

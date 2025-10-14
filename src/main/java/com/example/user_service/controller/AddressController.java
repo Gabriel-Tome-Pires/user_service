@@ -15,20 +15,20 @@ public class AddressController {
 
     private final AddressService addressService;
 
-    @PostMapping("/add")
+    @PostMapping
     public ResponseEntity<Address> createAddress(@RequestBody Address address) {
-        return ResponseEntity.ok(addressService.CreateAddress(address));
+        return ResponseEntity.ok(addressService.createAddress(address));
     }
 
     @PutMapping("/{id}")
     public ResponseEntity<Address> updateAddress(@RequestBody Address address, @PathVariable Long id) {
-        return ResponseEntity.ok(addressService.UpdateAddress(address, id));
+        return ResponseEntity.ok(addressService.updateAddress(address, id));
     }
 
     @DeleteMapping("/delete/{id}")
     public ResponseEntity<Void> deleteAddress(@PathVariable Long id) {
         Address address = addressService.getById(id);
-        addressService.DeleteAddress(address);
+        addressService.deleteAddress(address);
         return ResponseEntity.noContent().build();
     }
 

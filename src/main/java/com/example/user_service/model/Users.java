@@ -14,8 +14,7 @@ import java.time.LocalDateTime;
 @Getter
 @Setter
 @NoArgsConstructor
-@Table(name = "Users")
-public class User {
+public class Users {
     @Id
     @Setter(AccessLevel.NONE)
     @GeneratedValue(strategy = GenerationType.AUTO)
@@ -26,11 +25,11 @@ public class User {
     @Timestamp
     @NotNull
     private LocalDateTime createdAt;
-    @ManyToOne
+    @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "address_id")
     private Address address;
 
-    public User(Address address, LocalDateTime createdAt, String email, String name) {
+    public Users(Address address, LocalDateTime createdAt, String email, String name) {
         this.address = address;
         this.createdAt = createdAt;
         this.email = email;
