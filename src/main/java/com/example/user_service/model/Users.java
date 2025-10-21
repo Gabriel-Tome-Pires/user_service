@@ -25,7 +25,7 @@ public class Users {
     @Timestamp
     @NotNull
     private LocalDateTime createdAt;
-    @ManyToOne(cascade = CascadeType.ALL)
+    @ManyToOne
     @JoinColumn(name = "address_id")
     private Address address;
 
