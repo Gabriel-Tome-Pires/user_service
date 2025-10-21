@@ -1,0 +1,31 @@
+services:
+  user_service:
+    container_name: user-services
+    build: .
+    ports:
+      - "8081:8080"
+    depends_on:
+      - user-postgres
+    networks:
+      - e-commerce-API
+  user-postgres:
+    image: postgres:15
+    container_name: user_db
+    restart: always
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: 1783
+      POSTGRES_DB: mydb
+    networks:
+      - e-commerce-API
+    ports:
+      - "5433:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+volumes:
+  postgres_data:
+
+networks:
+  e-commerce-API:
+    external: true
