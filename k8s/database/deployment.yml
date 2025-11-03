@@ -1,0 +1,34 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: user-db
+  namespace: e-commerce
+spec:
+  selector:
+    matchLabels:
+      app: user-db
+  template:
+    metadata:
+      labels:
+        app: user-db
+    spec:
+      containers:
+        - name: user-db
+          image: postgres:15
+          ports:
+                - containerPort: 5432
+          env:
+              - name: POSTGRES_USER
+                value: "postgres"
+              - name: POSTGRES_PASSWORD
+                value: "1783"
+              - name: POSTGRES_DB
+                value: "user"
+          volumeMounts:
+               - mountPath: /var/lib/postgresql/data
+                 name: postgres-storage
+      volumes:
+          - name: postgres-storage
+            persistentVolumeClaim:
+             claimName: user-pvc
+
